@@ -1,0 +1,346 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    Личный кабинет
+{% endblock %}
+
+{% block content %}
+    <div class="persona">
+        <div class="layout__inner">
+            <div class="persona__inner">
+                <div class="persona__title">Личный кабинет</div>
+                <div class="persona__cont">
+                    <div class="persona__left">
+                        <div class="persona__history">
+                            <div class="history">
+                                <div class="history__title">ИСТОРИЯ ЗАКАЗОВ</div>
+                                <div class="history__cont">
+                                    <div class="history__table">
+                                        <table class="paginated">
+                                            <thead>
+                                            <tr>
+                                                <th scope="col" style="width:30%">Дата</th>
+                                                <th scope="col" style="width:40%">Стоимость, р.</th>
+                                                <th scope="col" style="width:30%">Статус</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr data-href="/detail.html" class="clickable-row">
+                                                <td class="history__date">15.07.2017</td>
+                                                <td>1200</td>
+                                                <td data-status="work" class="history__status"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="history__date">15.07.2017</td>
+                                                <td>1200</td>
+                                                <td data-status="end" class="history__status"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="history__date">15.07.2017</td>
+                                                <td>1200</td>
+                                                <td data-status="end" class="history__status"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="history__date">15.07.2017</td>
+                                                <td>1200</td>
+                                                <td data-status="end" class="history__status"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="history__date">15.07.2017</td>
+                                                <td>1200</td>
+                                                <td data-status="end" class="history__status"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="history__date">15.07.2017</td>
+                                                <td>1200</td>
+                                                <td data-status="end" class="history__status"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="history__date">15.07.2017</td>
+                                                <td>1200</td>
+                                                <td data-status="end" class="history__status"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="history__date">15.07.2017</td>
+                                                <td>1200</td>
+                                                <td data-status="end" class="history__status"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="history__date">15.07.2017</td>
+                                                <td>1200</td>
+                                                <td data-status="end" class="history__status"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="history__date">15.07.2017</td>
+                                                <td>1200</td>
+                                                <td data-status="end" class="history__status"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="history__date">15.07.2017</td>
+                                                <td>1200</td>
+                                                <td data-status="end" class="history__status"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="history__date">15.07.2017</td>
+                                                <td>1200</td>
+                                                <td data-status="work" class="history__status"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="history__date">15.07.2017</td>
+                                                <td>1200</td>
+                                                <td data-status="end" class="history__status"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="history__date">15.07.2017</td>
+                                                <td>1200</td>
+                                                <td data-status="end" class="history__status"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="history__date">15.07.2017</td>
+                                                <td>1200</td>
+                                                <td data-status="end" class="history__status"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="history__date">15.07.2017</td>
+                                                <td>1200</td>
+                                                <td data-status="end" class="history__status"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="history__date">15.07.2017</td>
+                                                <td>1200</td>
+                                                <td data-status="end" class="history__status"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="history__date">15.07.2017</td>
+                                                <td>1200</td>
+                                                <td data-status="end" class="history__status"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="history__date">15.07.2017</td>
+                                                <td>1200</td>
+                                                <td data-status="end" class="history__status"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="history__date">15.07.2017</td>
+                                                <td>1200</td>
+                                                <td data-status="end" class="history__status"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="history__date">15.07.2017</td>
+                                                <td>1200</td>
+                                                <td data-status="end" class="history__status"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="history__date">15.07.2017</td>
+                                                <td>1200</td>
+                                                <td data-status="end" class="history__status"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="history__date">15.07.2017</td>
+                                                <td>1200</td>
+                                                <td data-status="work" class="history__status"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="history__date">15.07.2017</td>
+                                                <td>1200</td>
+                                                <td data-status="end" class="history__status"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="history__date">15.07.2017</td>
+                                                <td>1200</td>
+                                                <td data-status="end" class="history__status"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="history__date">15.07.2017</td>
+                                                <td>1200</td>
+                                                <td data-status="end" class="history__status"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="history__date">15.07.2017</td>
+                                                <td>1200</td>
+                                                <td data-status="end" class="history__status"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="history__date">15.07.2017</td>
+                                                <td>1200</td>
+                                                <td data-status="end" class="history__status"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="history__date">15.07.2017</td>
+                                                <td>1200</td>
+                                                <td data-status="end" class="history__status"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="history__date">15.07.2017</td>
+                                                <td>1200</td>
+                                                <td data-status="end" class="history__status"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="history__date">15.07.2017</td>
+                                                <td>1200</td>
+                                                <td data-status="end" class="history__status"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="history__date">15.07.2017</td>
+                                                <td>1200</td>
+                                                <td data-status="end" class="history__status"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="history__date">15.07.2017</td>
+                                                <td>1200</td>
+                                                <td data-status="end" class="history__status"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="history__date">15.07.2017</td>
+                                                <td>1200</td>
+                                                <td data-status="work" class="history__status"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="history__date">15.07.2017</td>
+                                                <td>1200</td>
+                                                <td data-status="end" class="history__status"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="history__date">15.07.2017</td>
+                                                <td>1200</td>
+                                                <td data-status="end" class="history__status"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="history__date">15.07.2017</td>
+                                                <td>1200</td>
+                                                <td data-status="end" class="history__status"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="history__date">15.07.2017</td>
+                                                <td>1200</td>
+                                                <td data-status="end" class="history__status"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="history__date">15.07.2017</td>
+                                                <td>1200</td>
+                                                <td data-status="end" class="history__status"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="history__date">15.07.2017</td>
+                                                <td>1200</td>
+                                                <td data-status="end" class="history__status"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="history__date">15.07.2017</td>
+                                                <td>1200</td>
+                                                <td data-status="end" class="history__status"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="history__date">15.07.2017</td>
+                                                <td>1200</td>
+                                                <td data-status="end" class="history__status"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="history__date">15.07.2017</td>
+                                                <td>1200</td>
+                                                <td data-status="end" class="history__status"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="history__date">15.07.2017</td>
+                                                <td>1200</td>
+                                                <td data-status="end" class="history__status"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="history__date">15.07.2017</td>
+                                                <td>1200</td>
+                                                <td data-status="work" class="history__status"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="history__date">15.07.2017</td>
+                                                <td>1200</td>
+                                                <td data-status="end" class="history__status"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="history__date">15.07.2017</td>
+                                                <td>1200</td>
+                                                <td data-status="end" class="history__status"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="history__date">15.07.2017</td>
+                                                <td>1200</td>
+                                                <td data-status="end" class="history__status"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="history__date">15.07.2017</td>
+                                                <td>1200</td>
+                                                <td data-status="end" class="history__status"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="history__date">15.07.2017</td>
+                                                <td>1200</td>
+                                                <td data-status="end" class="history__status"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="history__date">15.07.2017</td>
+                                                <td>1200</td>
+                                                <td data-status="end" class="history__status"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="history__date">15.07.2017</td>
+                                                <td>1200</td>
+                                                <td data-status="end" class="history__status"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="history__date">15.07.2017</td>
+                                                <td>1200</td>
+                                                <td data-status="end" class="history__status"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="history__date">15.07.2017</td>
+                                                <td>1200</td>
+                                                <td data-status="end" class="history__status"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="history__date">15.07.2017</td>
+                                                <td>1200</td>
+                                                <td data-status="end" class="history__status"></td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="persona__options">
+                            <div class="options">
+                                <div class="options__title">НАСТРОЙКИ</div>
+                                <form action="{% url 'change_password' %}" method="post" class="options__form">
+                                    {% csrf_token %}
+                                    <div class="options__line">
+                                        <div data-input="Текущий пароль" class="input__cont">
+                                            <input id="id_old_password" name="old_password" type="password" class="input__this"/>
+                                        </div>
+                                    </div>
+                                    <div class="options__line">
+                                        <div data-input="Новый пароль" class="input__cont">
+                                            <input id="id_new_password" name="new_password" type="password" class="input__this"/>
+                                        </div>
+                                    </div>
+                                    <div class="options__line">
+                                        <div data-input="Повторить новый пароль" class="input__cont">
+                                            <input id="id_new_password_repeat" name="new_password_repeat" type="password" class="input__this"/>
+                                        </div>
+                                    </div>
+                                    <div class="options__bottom">
+                                        <button class="button">СОХРАНИТЬ</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="persona__right">
+                        <div class="statham">
+                            <div class="statham__item"><img src="{% static 'img/design/statham_01.png' %}"/></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

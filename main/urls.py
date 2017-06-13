@@ -15,12 +15,17 @@ Including another URLconf
 """
 from django.conf.urls import url
 
-from main.views import weekly_menu_view, auth_view, reg_view, home_view
+from main.views import (
+    weekly_menu_view, home_view, registration_view, login_view, logout_view,
+    account_view, change_password_view
+)
 
 urlpatterns = [
-    url(r'^weekly_menu/$', weekly_menu_view, name='weekly_menu'),
     url(r'^$', home_view, name='home'),
-    url(r'^reg/$', reg_view, name='reg'),
-    url(r'^auth/$', auth_view, name='auth'),
+    url(r'^weekly_menu/$', weekly_menu_view, name='weekly_menu'),
+    url(r'^registration/$', registration_view, name='registration'),
+    url(r'^login/$', login_view, name='login'),
     url(r'^logout/$', logout_view, name='logout'),
+    url(r'^account/$', account_view, name='account'),
+    url(r'^change_password/$', change_password_view, name='change_password')
 ]

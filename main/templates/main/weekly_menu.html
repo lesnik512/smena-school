@@ -1,6 +1,10 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block title %}
+    Меню на неделю
+{% endblock %}
+
 {% block content %}
     <div class="weekly">
         <div class="weekly__inner">
@@ -14,35 +18,7 @@
                         <div class="weekly__box">
                             {% for dinner in daily_menu.dinners.all %}
                                 <div class="weekly__item">
-                                    <div class="lunch">
-                                        <div style="background-image:url('{% static "img/design/item_03.jpg" %}')" class="lunch__image"></div>
-                                        <div class="lunch__desc">
-                                            <div class="lunch__top">
-                                                <div data-desc="{{ dinner.weight }} гр / {{ dinner.calorie }} ккал" class="lunch__title">
-                                                    {{ dinner.name }}
-                                                </div>
-                                                <div class="lunch__cost">{{ dinner.price }}</div>
-                                            </div>
-                                            <div class="lunch__box">
-                                                <div class="lunch__item lunch__item-hot">{{ dinner.soup }}</div>
-                                                <div class="lunch__item lunch__item-second">{{ dinner.second }}</div>
-                                                <div class="lunch__item lunch__item-salad">{{ dinner.salad }}</div>
-                                                <div class="lunch__item lunch__item-dessert">{{ dinner.dessert }}</div>
-                                            </div>
-                                            <div class="lunch__control">
-                                                <div class="lunch__control-text">Выбрать количество порций</div>
-                                                <div class="lunch__control-cont">
-                                                      <div class="lunch__control-minus">
-                                                          <button class="round-button minus"></button>
-                                                      </div>
-                                                      <div class="lunch__control-count">0</div>
-                                                      <div class="lunch__control-plus">
-                                                          <button class="round-button plus"></button>
-                                                      </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    {% include 'main/inc/menu_item.html' %}
                                 </div>
                             {% endfor %}
                         </div>
