@@ -19,10 +19,12 @@ class Dish(models.Model):
                             choices=TYPES_OF_DISHES,
                             default='HOT')
 
+
 class Dinner(models.Model):
     name = models.CharField(max_length=255)
     dishes = models.ForeignKey(Dish)
     image = models.FileField(upload_to='uploads/')
+
 
 class DailyMenu(models.Model):
     date = models.DateField(auto_now=True)

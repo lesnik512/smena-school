@@ -620,12 +620,26 @@ a.button {
   margin-top: 13px;
 }
 .footer {
-  height: 50px;
   background-color: #191919;
   font-family: RobotoLight;
   font-size: 14px;
   color: #fff;
+}
+.footer__cont:before,
+.footer__cont:after {
+  content: "";
+  display: table;
+}
+.footer__cont:after {
+  clear: both;
+}
+.footer__copyright {
+  float: left;
   line-height: 50px;
+}
+.footer__button {
+  float: right;
+  padding-top: 9px;
 }
 .form {
   background-color: #fff;
