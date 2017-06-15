@@ -21,7 +21,7 @@
         <div class="layout__inner">
             <div class="menu__cont">
                 {% for dinner in dinners.all %}
-                    {% include 'main/inc/menu_item.html' %}
+                    {% include 'main/inc/menu_item.html' with basket=basket %}
                 {% endfor %}
             </div>
         </div>

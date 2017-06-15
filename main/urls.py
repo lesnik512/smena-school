@@ -17,8 +17,8 @@ from django.conf.urls import url
 
 from main.views import (
     weekly_menu_view, home_view, registration_view, login_view, logout_view,
-    account_view, change_password_view
-)
+    account_view, change_password_view,
+    add_item_view, remove_item_view)
 
 urlpatterns = [
     url(r'^$', home_view, name='home'),
@@ -27,5 +27,7 @@ urlpatterns = [
     url(r'^login/$', login_view, name='login'),
     url(r'^logout/$', logout_view, name='logout'),
     url(r'^account/$', account_view, name='account'),
-    url(r'^change_password/$', change_password_view, name='change_password')
+    url(r'^change_password/$', change_password_view, name='change_password'),
+    url(r'^add_item/(\d+)/$', add_item_view, name='add_item'),
+    url(r'^remove_item/(\d+)/$', remove_item_view, name='remove_item')
 ]

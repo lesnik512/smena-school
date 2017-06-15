@@ -1,19 +1,20 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
 from datetime import date, timedelta
 
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
+from django.template.defaulttags import register
 from django.views.decorators.http import require_POST
+
+from main.utils import sms_code_is_valid, get_mon_fri_of_current_week, create_basket, create_basket_item
 
 from dishes.models import DailyMenu
 from main.forms import LoginForm, RegistrationForm, ChangePasswordForm
-from main.models import Client
-
-# Create your views here.
-from main.utils import sms_code_is_valid, get_mon_fri_of_current_week
+from main.models import Client, Basket, BasketItem
 
 
 def weekly_menu_view(request):
@@ -27,7 +28,8 @@ def weekly_menu_view(request):
         'today': today,
         'monday_date': mon,
         'friday_date': fri,
-        'weekly_menu': weekly_menu
+        'weekly_menu': weekly_menu,
+        'basket': False
     }
     return render(request, 'main/weekly_menu.html', context)
 
@@ -35,10 +37,20 @@ def weekly_menu_view(request):
 def home_view(request):
     daily_menu = DailyMenu.objects.get(date=date.today())
     dinners = daily_menu.dinners.all()
+    basket_id = request.session.get('basket_id')
+    basket = Basket.objects.get(id=basket_id) if basket_id else False
+    basket_dict = {} if basket else False
+    if basket:
+        for dinner in dinners:
+            basket_item = BasketItem.objects.get(basket=basket, dinner=dinner)
+            quantity = basket_item.quantity if basket_item else 0
+            basket_dict[dinner.id] = quantity
     context = {
         'today': date.today(),
-        'dinners': dinners
+        'dinners': dinners,
+        'basket': basket_dict
     }
+
     return render(request, 'main/home.html', context)
 
 
@@ -66,7 +78,7 @@ def login_view(request):
     return redirect('home')
 
 
-@require_POST #TODO ask why require_POST
+@require_POST
 def registration_view(request):
     form = RegistrationForm(request.POST)
 
@@ -121,5 +133,32 @@ def change_password_view(request):
         user.save()
 
         login(request, user)
+    else:
+        redirect('account')
 
     return redirect('account')
+
+
+def add_item_view(request,item_id):
+    basket = create_basket(request)
+    if item_id:
+        item = create_basket_item(basket,item_id)
+        item.quantity = item.quantity + 1
+        item.save()
+
+    return redirect('home')
+
+
+def remove_item_view(request,item_id):
+    basket = create_basket(request)
+    if item_id:
+        item = create_basket_item(basket, item_id)
+        item.quantity = item.quantity - 1 if item.quantity > 0 else 0
+        item.save()
+
+    return redirect('home')
+
+
+@register.filter
+def get_item(dictionary, key):
+    return dictionary.get(key)
