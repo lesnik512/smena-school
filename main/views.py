@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.core.paginator import Paginator
 from django.shortcuts import render, redirect
 from django.template.defaulttags import register
 from django.views.decorators.http import require_POST
 
-from main.utils import sms_code_is_valid, get_mon_fri_of_current_week, create_basket, create_basket_item
+from main.utils import sms_code_is_valid, get_mon_fri_of_current_week, create_basket, create_basket_item, get_basket
 
 from dishes.models import DailyMenu
 from main.forms import LoginForm, RegistrationForm, ChangePasswordForm
@@ -35,22 +36,30 @@ def weekly_menu_view(request):
 
 
 def home_view(request):
-    daily_menu = DailyMenu.objects.get(date=date.today())
-    dinners = daily_menu.dinners.all()
+    try:
+        daily_menu = DailyMenu.objects.get(date=date.today())
+    except DailyMenu.DoesNotExist:
+        daily_menu = False
+    dinners = daily_menu.dinners.all() if daily_menu else False
     basket_id = request.session.get('basket_id')
-    basket = Basket.objects.get(id=basket_id) if basket_id else False
+    try:
+        basket = Basket.objects.get(id=basket_id) if basket_id else False
+    except Basket.DoesNotExist:
+        basket = False
     basket_dict = {} if basket else False
-    if basket:
+    if basket and dinners:
         for dinner in dinners:
-            basket_item = BasketItem.objects.get(basket=basket, dinner=dinner)
+            try:
+                basket_item = BasketItem.objects.get(basket=basket, dinner=dinner)
+            except BasketItem.DoesNotExist:
+                basket_item = False
             quantity = basket_item.quantity if basket_item else 0
             basket_dict[dinner.id] = quantity
     context = {
         'today': date.today(),
         'dinners': dinners,
-        'basket': basket_dict
+        'basket_dict': basket_dict
     }
-
     return render(request, 'main/home.html', context)
 
 
@@ -139,17 +148,17 @@ def change_password_view(request):
     return redirect('account')
 
 
-def add_item_view(request,item_id):
+def add_item_view(request, item_id):
     basket = create_basket(request)
     if item_id:
-        item = create_basket_item(basket,item_id)
+        item = create_basket_item(basket, item_id)
         item.quantity = item.quantity + 1
         item.save()
 
     return redirect('home')
 
 
-def remove_item_view(request,item_id):
+def remove_item_view(request, item_id):
     basket = create_basket(request)
     if item_id:
         item = create_basket_item(basket, item_id)
@@ -159,6 +168,40 @@ def remove_item_view(request,item_id):
     return redirect('home')
 
 
+@require_POST
+def add_address_view(request):
+    basket = create_basket(request)
+
+    address = request.POST.get('address')
+
+    if basket.sum and address:
+        basket.address = address
+        basket.save()
+
+    return redirect('home')
+
+
+@require_POST
+def add_delivery_time_view(request):
+    basket = create_basket(request)
+
+    minutes = request.POST.get('minutes')
+    hours = request.POST.get('hours')
+
+    if minutes and hours:
+        basket.delivery_at = date.today() + timedelta(hours=int(hours), minutes=int(minutes))
+        basket.order_date = datetime.now()
+        basket.save()
+        del request.session['basket_id']
+
+    return redirect('home')
+
+
 @register.filter
 def get_item(dictionary, key):
     return dictionary.get(key)
+
+
+#def profile(request):
+#    orders = Basket.objects.filter()
+#    paginator = Paginator()

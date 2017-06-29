@@ -3,7 +3,7 @@ from datetime import timedelta, date
 
 from dishes.models import DailyMenu, Dinner
 
-from main.models import Basket, BasketItem
+from main.models import Basket, BasketItem, Client
 
 
 def get_mon_fri_of_current_week(today):
@@ -23,12 +23,23 @@ def clean_phone(dirty_phone):
 
 def create_basket(request):
     basket_id = request.session.get('basket_id')
-    if not basket_id:
+    try:
+        basket = Basket.objects.get(id=basket_id) if basket_id else False
+    except Basket.DoesNotExist:
+        basket = False
+    if not basket:
         daily_menu = DailyMenu.objects.get(date=date.today())
         dinners = daily_menu.dinners.all()
+        client = False
         if request.user.is_authenticated:
-            basket = Basket.objects.create(client=request.user.client,
-                                           delivery_at=daily_menu.date)
+            try:
+                client = request.user.client
+            except Client.DoesNotExist:
+                pass
+            if not client:
+                Client.objects.create(phone=request.user.username, user=request.user)
+        if client:
+            basket = Basket.objects.create(client=client, delivery_at=daily_menu.date)
         else:
             basket = Basket.objects.create(delivery_at=daily_menu.date)
 
@@ -36,14 +47,28 @@ def create_basket(request):
             BasketItem.objects.create(basket=basket, dinner=dinner, quantity=0)
 
         request.session['basket_id'] = basket.id
-    else:
-        basket = Basket.objects.get(id=basket_id)
+
     return basket
 
 
-def create_basket_item(basket,item_id):
+def get_basket(request):
+    basket_id = request.session.get('basket_id')
+    try:
+        basket = Basket.objects.get(id=basket_id) if basket_id else False
+    except Basket.DoesNotExist:
+        basket = False
+    return {'basket': basket}
+
+
+def create_basket_item(basket, item_id):
     dinner = Dinner.objects.get(id=item_id)
-    basket_item = BasketItem.objects.get(basket=basket, dinner=dinner)
+    try:
+        basket_item = BasketItem.objects.get(basket=basket, dinner=dinner)
+    except BasketItem.DoesNotExist:
+        basket_item = False
+
     if not basket_item:
         basket_item = BasketItem.objects.create(basket=basket, dinner=dinner, quantity=0)
+    if not basket_item.price:
+        basket_item.price = dinner.price
     return basket_item

@@ -7,7 +7,7 @@
 
 {% block content %}
     <div class="hero">
-        <div style="background-image:url(&quot;static/img/design/main.png&quot;)" class="hero__image"></div>
+        <div style="background-image:url({% static 'img/design/main.png' %})" class="hero__image"></div>
         <div class="layout__inner">
             <div class="hero__cont">
                 <div class="hero__text">доставка <span>обедов</span></div>
@@ -21,7 +21,7 @@
         <div class="layout__inner">
             <div class="menu__cont">
                 {% for dinner in dinners.all %}
-                    {% include 'main/inc/menu_item.html' with basket=basket %}
+                    {% include 'main/inc/menu_item.html' with basket=basket_dict %}
                 {% endfor %}
             </div>
         </div>
@@ -82,5 +82,47 @@
                 </div>
             </div>
         </div>
+    {% else %}
+        {% if not basket or not basket.address %}
+            <div class="order">
+                <div class="form">
+                    <div class="form__title">ОФОРМИТЬ ЗАКАЗ</div>
+                    <div class="form__desc">АДРЕС ДОСТАВКИ</div>
+                    <form action="{% url 'add_address' %}" method="post" class="form__this">
+                        {% csrf_token %}
+                        <div class="form__line">
+                            <div data-input="Ваш адрес " class="input__cont">
+                                <input id="id_address" name="address" class="input__this"/>
+                            </div>
+                        </div>
+                        <div class="form__more">Если все верно:</div>
+                        <div class="form__bottom">
+                            <button class="button">ПРОДОЛЖИТЬ</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        {% elif not basket.order_date %}
+            <div class="order">
+                <div class="form">
+                    <div class="form__title">ОФОРМИТЬ ЗАКАЗ</div>
+                    <div class="form__desc">УКАЗАТЬ ВРЕМЯ ДОСТАВКИ</div>
+                    <form action="{% url 'add_delivery_time' %}" method="post" class="form__this">
+                        {% csrf_token %}
+                        <div class="form__line form__line-time">
+                            <div class="form__time">
+                                <input id="id_hours" name="hours" placeholder="00" class="form__time-input"/>
+                            </div>
+                            <div class="form__time">
+                                <input id="id_minutes" name="minutes" placeholder="00" class="form__time-input"/>
+                            </div>
+                        </div>
+                        <div class="form__bottom">
+                            <button class="button">ПРОДОЛЖИТЬ</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        {% endif %}
     {% endif %}
 {% endblock %}
