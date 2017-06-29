@@ -6,7 +6,7 @@ from datetime import date, timedelta, datetime
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.core.paginator import Paginator
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.shortcuts import render, redirect
 from django.template.defaulttags import register
 from django.views.decorators.http import require_POST
@@ -119,7 +119,17 @@ def logout_view(request):
 
 @login_required
 def account_view(request):
-    return render(request, 'main/account.html')
+    order_list = Basket.objects.filter(order_date__isnull=False)
+    paginator = Paginator(order_list, 2)  # Show 25 contacts per page
+    page = request.GET.get('page')
+    try:
+        orders = paginator.page(page)
+    except PageNotAnInteger:
+        orders = paginator.page(1)
+    context = {
+        'orders': orders
+    }
+    return render(request, 'main/account.html', context)
 
 
 @login_required
@@ -200,8 +210,3 @@ def add_delivery_time_view(request):
 @register.filter
 def get_item(dictionary, key):
     return dictionary.get(key)
-
-
-#def profile(request):
-#    orders = Basket.objects.filter()
-#    paginator = Paginator()

@@ -130,15 +130,15 @@ $(function () {
 
 //История заказов(ссылка  по клику на строке)
 
-    $(".clickable-row").click(function () {
+/*    $(".clickable-row").click(function () {
         var curHref= document.location.host
         var goHref='http://' + curHref + $(this).data("href");
         window.location.href = goHref;
-    });
+    });*/
 
 
 //Пагинация
-    $('table.paginated').each(function () {
+/*    $('table.paginated').each(function () {
         var currentPage = 0;
         var numPerPage = 10;
         var $table = $(this);
@@ -196,7 +196,7 @@ $(function () {
             $('.page-number').eq(currentPage).addClass('active');
             $table.trigger('repaginate');
         })
-    });
+    });*/
 })
 
 

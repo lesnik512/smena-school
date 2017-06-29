@@ -30,7 +30,7 @@
                     <div class="header__cart">
                         <a class="cart"><span
                             class="cart__text">В КОРЗИНЕ:</span><span
-                            class="cart__count">{% if basket %}{{ basket.quantity }}{% else %}0{% endif %}</span><span class="cart__cost">{% if basket %}{{ basket.sum }}{% else %}0{% endif %}</span></a>
+                            class="cart__count">{% if basket %}{{ basket.quantity|floatformat }}{% else %}0{% endif %}</span><span class="cart__cost">{% if basket %}{{ basket.sum|floatformat }}{% else %}0{% endif %}</span></a>
                     </div>
                     {% if user.is_authenticated %}
                         <div class="header__login"><a href="{% url 'account' %}" class="button button__akk">Личный кабинет</a></div>
