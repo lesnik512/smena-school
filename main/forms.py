@@ -9,7 +9,7 @@ from main.utils import clean_phone
 class RegistrationForm(forms.Form):
     phone = forms.CharField(max_length=16)
     password = forms.CharField(max_length=255)
-    sms_code = forms.CharField(max_length=4, min_length=4)
+    sms_code = forms.CharField(max_length=10, min_length=1)
 
     def clean_phone(self):
         phone = self.cleaned_data['phone']

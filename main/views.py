@@ -119,8 +119,8 @@ def logout_view(request):
 
 @login_required
 def account_view(request):
-    order_list = Basket.objects.filter(order_date__isnull=False)
-    paginator = Paginator(order_list, 2)  # Show 25 contacts per page
+    order_list = Basket.objects.filter(order_date__isnull=False, client=request.user.client).order_by('-order_date')
+    paginator = Paginator(order_list, 2)
     page = request.GET.get('page')
     try:
         orders = paginator.page(page)
@@ -205,6 +205,21 @@ def add_delivery_time_view(request):
         del request.session['basket_id']
 
     return redirect('home')
+
+
+def order_info_view(request, order_id):
+    try:
+        order = Basket.objects.get(id=order_id, client=request.user.client)
+    except DailyMenu.DoesNotExist:
+        order = False
+    if not order:
+        redirect('account')
+    basket_items = order.items.all() if order else False
+    context = {
+        'order': order,
+        'basket_items': basket_items
+    }
+    return render(request, 'main/order_view.html', context)
 
 
 @register.filter

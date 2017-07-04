@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    Информация о заказе №{{ order.id }}
+{% endblock %}
+
+{% block content %}
+    <div class="detail">
+        <div class="detail__inner">
+            <div class="detail__title">Детали заказа № {{ order.id }}</div>
+            <div class="detail__desc">
+                <div class="detail__date">{{ order.order_date|date:"d.m.Y" }}</div>
+                <div class="detail__time">{{ order.order_date|date:"H:i" }}</div>
+            </div>
+            <div class="detail__order">
+                {% for basket_item in basket_items %}
+                    {% if basket_item.quantity %}
+                        <div class="detail__item">
+                            <div class="weekly__item">
+                                {% include 'main/inc/menu_item.html' with dinner=basket_item.dinner basket_item=basket_item %}
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            <!--div class="detail__order-info">
+                <div class="detail__delivery">100</div>
+                <div class="detail__itogo">1 117 440</div>
+            </div-->
+            <div class="detail__courier">Курьер уже в пути!<br>Ориентировочное время доставки <span
+                    class='detail__courier-time'>{{ order.delivery_at|date:"H:i" }}</span></div>
+            <div class="detail__map"><img src="{% static 'img/design/map.png' %}"/></div>
+        </div>
+    </div>
+{% endblock %}

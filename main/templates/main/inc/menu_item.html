@@ -7,7 +7,14 @@
             <div data-desc="{{ dinner.weight }} гр / {{ dinner.calorie }} ккал" class="lunch__title">
                 {{ dinner.name }}
             </div>
-            <div class="lunch__cost">{{ dinner.price }}</div>
+            {% if basket_item %}
+                <div class="lunch__cost">
+                    <div class="lunch__cost-count">{{ basket_item.quantity }}</div>
+                    <div class="lunch__cost-all">{{ basket_item.sum|floatformat }}</div>
+                </div>
+            {% else %}
+                <div class="lunch__cost">{{ dinner.price }}</div>
+            {% endif %}
         </div>
         <div class="lunch__box">
             <div class="lunch__item lunch__item-hot">{{ dinner.soup }}</div>

@@ -37,3 +37,6 @@ class BasketItem(models.Model):
     dinner = models.ForeignKey(Dinner)
     quantity = models.IntegerField(default=0)
     price = models.FloatField(default=0)
+
+    def sum(self):
+        return self.quantity * self.price

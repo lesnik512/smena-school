@@ -28,7 +28,7 @@
                                             <tbody>
                                                 {% for order in orders %}
                                                     <tr>
-                                                        <td class="history__date">{{ order.order_date|date:"d.m.Y" }}</td>
+                                                        <td class="history__date"><a href="{% url 'order_info' order.id %}">{{ order.order_date|date:"d.m.Y" }}</a></td>
                                                         <td>{{ order.sum|floatformat }}</td>
                                                         <td data-status="work" class="history__status"></td>
                                                     </tr>

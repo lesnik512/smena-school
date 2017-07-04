@@ -1,5 +1,9 @@
 $(function () {
-
+    $('.order_address form').on('submit', function () {
+        $('.order_address').slideUp();
+        $('.order_time').slideDown()
+        return false;
+    });
 //скроллы
 
 //скролл до меню

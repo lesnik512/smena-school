@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from django.contrib import admin
 
 # Register your models here.
-from main.models import Basket, Client
+from main.models import Basket, Client, BasketItem
 
 
 @admin.register(Basket)
@@ -15,3 +15,8 @@ class BasketAdmin(admin.ModelAdmin):
 @admin.register(Client)
 class ClientAdmin(admin.ModelAdmin):
     list_display = ['phone', 'user']
+
+
+@admin.register(BasketItem)
+class BasketItemAdmin(admin.ModelAdmin):
+    list_display = ['basket', 'dinner', 'quantity', 'price']
