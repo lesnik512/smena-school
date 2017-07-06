@@ -7,9 +7,10 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.template.defaulttags import register
+from django.urls import reverse
 from django.views.decorators.http import require_POST
 
 from main.utils import sms_code_is_valid, get_mon_fri_of_current_week, create_basket, create_basket_item, get_basket
@@ -182,32 +183,37 @@ def change_amount_view(request, item_id):
 
 
 @require_POST
-def add_address_view(request):
+def purchasing_view(request):
     basket = create_basket(request)
 
     address = request.POST.get('address')
+    minutes = request.POST.get('minutes')
+    hours = request.POST.get('hours')
+    is_complete = False
+    url = ''
 
-    if basket.sum and address:
+    if address:
         basket.address = address
         basket.save()
 
-    return redirect('home')
-
-
-@require_POST
-def add_delivery_time_view(request):
-    basket = create_basket(request)
-
-    minutes = request.POST.get('minutes')
-    hours = request.POST.get('hours')
-
     if minutes and hours:
         basket.delivery_at = date.today() + timedelta(hours=int(hours), minutes=int(minutes))
+
+    if basket.address and minutes and hours:
         basket.order_date = datetime.now()
         basket.save()
         del request.session['basket_id']
+        is_complete = True
+        url = reverse('order_info', args=[basket.id])
 
-    return redirect('home')
+    if request.is_ajax():
+        context = {
+            'status': is_complete,
+            'url': url
+        }
+        return JsonResponse(context)
+    # return redirect('order_info', False, args=[basket.id])
+    return HttpResponseRedirect(reverse('order_info', args=[basket.id])) if is_complete else redirect('home')
 
 
 def order_info_view(request, order_id):

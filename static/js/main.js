@@ -5,6 +5,20 @@ $(function () {
         return false;
     });
 
+    $('.order_time form').on('submit', function () {
+        var $forms = $('.order form');
+        console.log($forms.serialize());
+        $.ajax({
+           type: "POST",
+           url: $forms.attr('action'),
+           data: $forms.serialize(),
+           success: function(data) {
+               if (data.status) window.location = data.url
+           }
+        });
+        return false
+    });
+
 
     $('.lunch__control-cont').on('submit', function (e) {
         var $form = $(this);
