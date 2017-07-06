@@ -7,6 +7,7 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.template.defaulttags import register
 from django.views.decorators.http import require_POST
@@ -158,23 +159,25 @@ def change_password_view(request):
     return redirect('account')
 
 
-def add_item_view(request, item_id):
+@require_POST
+def change_amount_view(request, item_id):
     basket = create_basket(request)
+    amount = int(request.POST.get('amount'))
+    context = {
+        'status': False,
+        'amount': 0
+    }
     if item_id:
         item = create_basket_item(basket, item_id)
-        item.quantity = item.quantity + 1
+        quantity = item.quantity + amount
+        item.quantity = quantity if quantity > 0 else 0
         item.save()
-
-    return redirect('home')
-
-
-def remove_item_view(request, item_id):
-    basket = create_basket(request)
-    if item_id:
-        item = create_basket_item(basket, item_id)
-        item.quantity = item.quantity - 1 if item.quantity > 0 else 0
-        item.save()
-
+        context['status'] = True
+        context['amount'] = item.quantity
+    if request.is_ajax():
+        context['basket_sum'] = basket.sum()
+        context['basket_amount'] = basket.quantity()
+        return JsonResponse(context)
     return redirect('home')
 
 

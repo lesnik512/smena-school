@@ -1,8 +1,29 @@
 $(function () {
     $('.order_address form').on('submit', function () {
         $('.order_address').slideUp();
-        $('.order_time').slideDown()
+        $('.order_time').slideDown();
         return false;
+    });
+
+
+    $('.lunch__control-cont').on('submit', function (e) {
+        var $form = $(this);
+        var fdata = $form.serialize();
+        var $btn = $form.find("button[type=submit]:focus");
+        fdata += '&amount=' + $btn.attr('value');
+        $.ajax({
+           type: "POST",
+           url: $form.attr('action'),
+           data: fdata,
+           success: function(data) {
+               if (data.status) {
+                   $form.find('.lunch__control-count').text(data.amount);
+                   $('.cart__count').text(data.basket_amount);
+                   $('.cart__cost').text(data.basket_sum);
+               }
+           }
+        });
+        return false
     });
 //скроллы
 
@@ -23,30 +44,6 @@ $(function () {
         var scroll_elem = $('.order');
         $('html, body').animate({scrollTop: $(scroll_elem).offset().top}, 500);
     });
-
-
-// Количество выбранных порций обеда
-
-    $('.round-button').click(function () {
-        var curCount = parseInt($(this).parents('.lunch').find('.lunch__control-count').text());
-        var countText = $(this).parents('.lunch').find('.lunch__control-count');
-        if ($(this).hasClass('minus')) {
-            if (curCount == 0) {
-
-            }
-            else {
-                curCount--;
-                $(countText).text(curCount)
-            }
-
-
-        }
-        else {
-            curCount++;
-            $(countText).text(curCount)
-        }
-    })
-
 
 // Маска для телефона
     $(".input__this-phone").mask("+7(999) 999-9999", {
