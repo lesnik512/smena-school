@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-fdh
 from datetime import timedelta, date, time, datetime
 
 from django.contrib.auth import login, authenticate, logout
