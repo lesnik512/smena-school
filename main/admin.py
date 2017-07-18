@@ -15,8 +15,3 @@ class BasketAdmin(admin.ModelAdmin):
 @admin.register(Client)
 class ClientAdmin(admin.ModelAdmin):
     list_display = ['phone', 'user']
-
-
-@admin.register(BasketItem)
-class BasketItemAdmin(admin.ModelAdmin):
-    list_display = ['basket', 'dinner', 'quantity', 'price']

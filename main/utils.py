@@ -28,8 +28,6 @@ def create_basket(request):
     except Basket.DoesNotExist:
         basket = False
     if not basket:
-        daily_menu = DailyMenu.objects.get(date=date.today())
-        dinners = daily_menu.dinners.all()
         client = False
         if request.user.is_authenticated:
             try:
@@ -39,12 +37,9 @@ def create_basket(request):
             if not client:
                 Client.objects.create(phone=request.user.username, user=request.user)
         if client:
-            basket = Basket.objects.create(client=client, delivery_at=daily_menu.date)
+            basket = Basket.objects.create(client=client)
         else:
-            basket = Basket.objects.create(delivery_at=daily_menu.date)
-
-        for dinner in dinners:
-            BasketItem.objects.create(basket=basket, dinner=dinner, quantity=0)
+            basket = Basket.objects.create()
 
         request.session['basket_id'] = basket.id
 
@@ -52,12 +47,7 @@ def create_basket(request):
 
 
 def get_basket(request):
-    basket_id = request.session.get('basket_id')
-    try:
-        basket = Basket.objects.get(id=basket_id) if basket_id else False
-    except Basket.DoesNotExist:
-        basket = False
-    return {'basket': basket}
+    return {'basket': request.basket}
 
 
 def create_basket_item(basket, item_id):

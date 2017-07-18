@@ -42,7 +42,7 @@
                                 <input name="phone" id="phone" class="input__this input__this-phone"/>
                             </div>
                         </div>
-                        <div class="form__line error">
+                        <div class="form__line">
                             <div data-input="Пароль" class="input__cont">
                                 <input name="password" type="password" class="input__this"/>
                             </div>
@@ -55,18 +55,18 @@
                 <div data-tab="tab_2" class="form__item">
                     <form class="form__this" action="{% url 'registration' %}" method="post">
                         {% csrf_token %}
-                        <div class="form__line error">
+                        <div class="form__line">
                             <div data-input="Номер телефона" class="input__cont input__phone">
                                 <input name="phone" id="phone" class="input__this input__this-phone"/>
                             </div>
                         </div>
                         <div class="form__line form__line-sms">
                             <button class="button__sms">Выслать SMS-код</button>
-                            <div class="form__sms error">
+                            <div class="form__sms">
                                 <div class="form__sms-text">SMS-КОД:</div>
                                 <div class="form__sms-right">
                                     <input name="sms_code" class="form__sms-input"/>
-                                    <div class="form__sms-error">Неверный или пустой код</div>
+                                    <div class="form__sms-error" style="display: none">Неверный или пустой код</div>
                                 </div>
                             </div>
                         </div>

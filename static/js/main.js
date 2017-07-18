@@ -60,11 +60,14 @@ $(function () {
     });
 
 // Маска для телефона
-    $(".input__this-phone").mask("+7(999) 999-9999", {
-        completed: function () {
-            $(this).parents('.input__cont').addClass('complete');
-        }
+    $(".input__this-phone").on('focus',function () {
+        $(this).mask("+7(999) 999-9999", {
+            completed: function () {
+                $(this).parents('.input__cont').addClass('complete');
+            }
+        });
     });
+
 
 
 //Placeholder - событие по фокусу
