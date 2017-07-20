@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+# import raven
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -37,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # 'raven.contrib.django.raven_compat',
+    # 'debug_toolbar',
     'main',
     'dishes',
 ]
@@ -48,7 +52,8 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
     'main.middlewares.BasketMiddleware',
 ]
 
@@ -126,13 +131,9 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(os.path.join(BASE_DIR, "static"))]
 
-# CACHES = {
-#     'default': {
-#         'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-#         'LOCATION': os.path.join(BASE_DIR, 'cache'),
-#         'TIMEOUT': 60,
-#         'OPTIONS': {
-#             'MAX_ENTRIES': 100
-#         }
-#     }
+# RAVEN_CONFIG = {
+#     'dsn': 'http://7a60d6cdab6c42c9ae850b3deca67a3a:6551acd7d0f84f0d98ebf2655bea80c9@sentry.smenadev.ru/63',
+#     'release': raven.fetch_git_sha(os.path.dirname(os.pardir)),
 # }
+
+# INTERNAL_IPS = {'127.0.0.1'}
