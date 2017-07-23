@@ -27,7 +27,7 @@ SECRET_KEY = '6gju!5j-)_4wcmn1=@6o7x#ov45==35z9mz9%02xpu+a^4pved'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["ash.redeploy.ru"]
 
 
 # Application definition
