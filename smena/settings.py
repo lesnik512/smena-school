@@ -25,9 +25,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '6gju!5j-)_4wcmn1=@6o7x#ov45==35z9mz9%02xpu+a^4pved'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True
+DEBUG = bool(os.environ.get('environment') != "Production")
+DEBUG_TOOLBAR = False
 
-ALLOWED_HOSTS = ["ash.redeploy.ru"]
+ALLOWED_HOSTS = ['ash.redeploy.ru',u'127.0.0.1']
 
 
 # Application definition
@@ -127,7 +129,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, "static")
+if DEBUG:
+    STATICFILES_DIRS = [os.path.join(os.path.join(BASE_DIR, "static"))]
+else:
+    STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 # RAVEN_CONFIG = {
 #     'dsn': 'http://7a60d6cdab6c42c9ae850b3deca67a3a:6551acd7d0f84f0d98ebf2655bea80c9@sentry.smenadev.ru/63',
