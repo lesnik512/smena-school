@@ -129,9 +129,6 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
-STATICFILES_DIRS = [
-    os.path.join(os.path.join(BASE_DIR, "static"))]
-
 # RAVEN_CONFIG = {
 #     'dsn': 'http://7a60d6cdab6c42c9ae850b3deca67a3a:6551acd7d0f84f0d98ebf2655bea80c9@sentry.smenadev.ru/63',
 #     'release': raven.fetch_git_sha(os.path.dirname(os.pardir)),
