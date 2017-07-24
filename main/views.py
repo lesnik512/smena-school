@@ -76,13 +76,9 @@ class LoginView(View):
 
             try:
                 Client.objects.get(phone=phone)
-
                 user = authenticate(request, username=phone, password=password)
-
                 if user:
                     login(request, user)
-                    request.basket.client = user.client
-                    request.basket.save()
 
             except Client.DoesNotExist:
                 return redirect('home')
@@ -120,7 +116,10 @@ class RegistrationView(View):
 
 class LogoutView(View):
     def get(self, request):
+        basket_id = request.session.get('basket_id')
         logout(request)
+        if basket_id:
+            request.session['basket_id'] = basket_id
         return redirect('home')
 
 
