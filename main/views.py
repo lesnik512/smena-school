@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import json
 from datetime import timedelta, date, time, datetime
 
+import requests
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -18,7 +20,7 @@ from main.utils import sms_code_is_valid, get_mon_fri_of_current_week, create_ba
 
 from dishes.models import DailyMenu
 from main.forms import LoginForm, RegistrationForm, ChangePasswordForm
-from main.models import Client, Basket, BasketItem
+from main.models import Client, Basket, BasketItem, Address
 
 
 class WeeklyMenuView(View):
@@ -192,15 +194,45 @@ class ChangeAmountView(View):
 class PurchasingView(View):
     def post(self, request):
         basket = request.basket
-
         address = request.POST.get('address')
-        minutes = int(request.POST.get('minutes'))
-        hours = int(request.POST.get('hours'))
+        geo_lat = request.POST.get('address_geo_lat')
+        geo_lon = request.POST.get('address_geo_lon')
+        try:
+            minutes = int(request.POST.get('minutes'))
+        except ValueError:
+            minutes = False
+        try:
+            hours = int(request.POST.get('hours'))
+        except ValueError:
+            hours = False
         is_complete = False
         url = ''
 
-        if address:
-            basket.address = address
+        address_object = False
+        if geo_lat and geo_lon:
+            address_object = Address.objects.create(
+                address=address,
+                geo_lat=request.POST.get('address_geo_lat'),
+                geo_lon=request.POST.get('address_geo_lon'),
+                client=request.user.client
+            )
+            response = requests.post(
+                'http://95.213.141.29/route/create/',
+                headers={'host': 'cme.frfrdev.ru'},
+                data={'lat': geo_lat, 'lon': geo_lon}
+            )
+            if response.status_code == 200:
+                content = json.loads(response.content)
+                basket.route_id = content['id']
+                basket.save()
+        elif address:
+            address_object = Address.objects.create(
+                address=address,
+                client=request.user.client
+            )
+
+        if address_object:
+            basket.address = address_object
             basket.save()
 
         if minutes and hours:
@@ -219,7 +251,6 @@ class PurchasingView(View):
                 'url': url
             }
             return JsonResponse(context)
-        # return redirect('order_info', False, args=[basket.id])
         return HttpResponseRedirect(reverse('order_info', args=[basket.id])) if is_complete else redirect('home')
 
 
@@ -240,6 +271,18 @@ class OrderInfoView(View):
         }
         return render(request, self.template_name, context)
 
+
+class CurrentPointView(View):
+    def get(self, request, route_id):
+        context = {}
+        if route_id:
+            response = requests.get(
+                'http://95.213.141.29/route/'+route_id+'/current_point/',
+                headers={'host': 'cme.frfrdev.ru'}
+            )
+            if response.status_code == 200:
+                context = json.loads(response.content)
+        return JsonResponse(context)
 
 @register.filter
 def get_item(dictionary, key):

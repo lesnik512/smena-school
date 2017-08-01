@@ -12,12 +12,20 @@ class Client(models.Model):
     user = models.OneToOneField(User)
 
 
+class Address(models.Model):
+    address = models.CharField(max_length=512, null=False)
+    geo_lat = models.CharField(max_length=50, null=True)
+    geo_lon = models.CharField(max_length=50, null=True)
+    client = models.ForeignKey(Client, related_name='addresses')
+
+
 class Basket(models.Model):
     created = models.DateTimeField(auto_now=True)
     client = models.ForeignKey(Client, null=True)
-    address = models.CharField(max_length=512, null=True)
+    address = models.ForeignKey(Address, null=True)
     delivery_at = models.DateTimeField(null=True)
     order_date = models.DateTimeField(null=True)
+    route_id = models.IntegerField(null=True)
 
     def sum(self):
         summary = 0

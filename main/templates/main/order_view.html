@@ -30,7 +30,44 @@
             </div-->
             <div class="detail__courier">Курьер уже в пути!<br>Ориентировочное время доставки <span
                     class='detail__courier-time'>{{ order.delivery_at|date:"H:i" }}</span></div>
-            <div class="detail__map"><img src="{% static 'img/design/map.png' %}"/></div>
+            {% if order.route_id %}
+                <div class="detail__map">
+                    <script src="//api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
+                    <div id="map" style="height: 545px;"></div>
+                    <script>
+                        var placemark, coords;
+                        ymaps.ready(function () {
+                            var myMap = new ymaps.Map('map', {
+{#                                    center: [54.74128152445869,55.99494346316378],#}
+                                    center: [54.706419,55.997823],
+                                    zoom: 16,
+                                    controls: []
+                                });
+                            placemark = new ymaps.Placemark([54.706419,55.997823], {
+                                balloonContent: 'Курьер'
+                            });
+                            myMap.geoObjects.add(placemark);
+                            $(document).ready(function() {
+                                var intervalID = setInterval( function() {
+                                    $.getJSON('/current_point/{{ order.route_id }}/',function (data) {
+                                        console.log(data);
+                                        if (data.point) {
+                                            coords = [data.point.lat, data.point.lon];
+                                            myMap.geoObjects.remove(placemark);
+                                            placemark = new ymaps.Placemark(coords, {
+                                                balloonContent: 'Курьер'
+                                            });
+                                            myMap.geoObjects.add(placemark);
+                                            myMap.panTo(coords, {flying: 1,duration: 500});
+                                        }
+                                    });
+                                } , 1000)
+                            });
+                        });
+                    </script>
+                </div>
+            {% endif %}
+
         </div>
     </div>
 {% endblock %}

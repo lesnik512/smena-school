@@ -1,4 +1,25 @@
 $(function () {
+    var address_info = [];
+    $("#id_address").suggestions({
+        token: "b6f7b487c9c0ba5220d9c3d31cc26184a5174432",
+        type: "ADDRESS",
+        count: 5,
+        /* Вызывается, когда пользователь выбирает одну из подсказок */
+        onSelect: function (suggestion) {
+            address_info = [
+                {
+                    'name': 'address_geo_lat',
+                    'value': suggestion.data.geo_lat
+                },
+                {
+                    'name': 'address_geo_lon',
+                    'value': suggestion.data.geo_lon
+                }
+            ];
+            console.log(address_info);
+        }
+    });
+
     $('.order_address form').on('submit', function () {
         $('.order_address').slideUp();
         $('.order_time').slideDown();
@@ -7,18 +28,19 @@ $(function () {
 
     $('.order_time form').on('submit', function () {
         var $forms = $('.order form');
-        console.log($forms.serialize());
+        var data = $forms.serializeArray();
+        if (address_info.length) data = data.concat(address_info);
         $.ajax({
-           type: "POST",
-           url: $forms.attr('action'),
-           data: $forms.serialize(),
-           success: function(data) {
-               if (data.status) window.location = data.url
-           }
+            type: "POST",
+            url: $forms.attr('action'),
+            data: data,
+            dataType: 'json',
+            success: function(data) {
+                if (data.status) window.location = data.url
+            }
         });
         return false
     });
-
 
     $('.lunch__control-cont').on('submit', function (e) {
         var $form = $(this);
@@ -146,75 +168,6 @@ $(function () {
         })
     })
 
-//История заказов(ссылка  по клику на строке)
-
-/*    $(".clickable-row").click(function () {
-        var curHref= document.location.host
-        var goHref='http://' + curHref + $(this).data("href");
-        window.location.href = goHref;
-    });*/
-
-
-//Пагинация
-/*    $('table.paginated').each(function () {
-        var currentPage = 0;
-        var numPerPage = 10;
-        var $table = $(this);
-        var countRow = $($table).find('tbody tr').length;
-        var countPage = Math.ceil(countRow / numPerPage);
-        $($table).parent('div').height($(this).find('tbody tr').height() * numPerPage + $(this).find('thead tr').height())
-        $table.bind('repaginate', function () {
-            $table.find('tbody tr').hide().slice(currentPage * numPerPage, (currentPage + 1) * numPerPage).show();
-        });
-        $table.trigger('repaginate');
-        var numRows = $table.find('tbody tr').length;
-        var numPages = Math.ceil(numRows / numPerPage);
-        var $pager = $('<div class="pager">' +
-            '<a class="page__control page__first"></a>' +
-            '<a class=" page__control page__prev"></a>' +
-            '<a class=" page__control page__next"></a>' +
-            '<a class=" page__control page__last"></a>' +
-            '</div>');
-        var $pagerBox = $('<div class="pager__box"></div>').appendTo($pager);
-        for (var page = 0; page < numPages; page++) {
-            $('<span class="page-number"></span>').text(page + 1).bind('click', {
-                newPage: page
-            }, function (event) {
-                currentPage = event.data['newPage'];
-                $table.trigger('repaginate');
-                $(this).addClass('active').siblings().removeClass('active');
-            }).appendTo($pagerBox).addClass('clickable');
-        }
-        $pager.insertAfter($($table).parent('div')).find('span.page-number:first').addClass('active');
-
-        $('.page__first').click(function () {
-            $('.page-number').removeClass('active');
-            $('.page-number:first').addClass('active');
-            currentPage = 0;
-            $table.trigger('repaginate');
-        })
-
-        $('.page__last').click(function () {
-            $('.page-number').removeClass('active');
-            $('.page-number:last').addClass('active');
-            currentPage = countPage - 1;
-            $table.trigger('repaginate');
-        })
-
-        $('.page__prev').click(function () {
-            $('.page-number').removeClass('active');
-            currentPage--;
-            $('.page-number').eq(currentPage).addClass('active');
-            $table.trigger('repaginate');
-        })
-
-        $('.page__next').click(function () {
-            $('.page-number').removeClass('active');
-            currentPage++;
-            $('.page-number').eq(currentPage).addClass('active');
-            $table.trigger('repaginate');
-        })
-    });*/
 })
 
 

@@ -2,7 +2,7 @@ from django.conf.urls import url
 
 from main.views import (
     WeeklyMenuView, HomeView, LoginView, RegistrationView, LogoutView, AccountView, ChangePasswordView,
-    ChangeAmountView, PurchasingView, OrderInfoView)
+    ChangeAmountView, PurchasingView, OrderInfoView, CurrentPointView)
 
 urlpatterns = [
     url(r'^$', HomeView.as_view(), name='home'),
@@ -14,5 +14,6 @@ urlpatterns = [
     url(r'^change_password/$', ChangePasswordView.as_view(), name='change_password'),
     url(r'^change_amount/(\d+)/$', ChangeAmountView.as_view(), name='change_amount'),
     url(r'^purchasing/$', PurchasingView.as_view(), name='purchasing'),
-    url(r'^order_info/(\d+)/$', OrderInfoView.as_view(), name='order_info')
+    url(r'^order_info/(\d+)/$', OrderInfoView.as_view(), name='order_info'),
+    url(r'^current_point/(\d+)/$', CurrentPointView.as_view(), name='current_point')
 ]

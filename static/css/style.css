@@ -1608,3 +1608,7 @@ a.button {
     position: fixed;
   }
 }
+
+.suggestions-wrapper {
+  font-size: 14px;
+}
