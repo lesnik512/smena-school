@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import json
+import random
 from datetime import timedelta, date, time, datetime
 
 import requests
@@ -16,11 +16,11 @@ from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views import View
 
-from main.utils import sms_code_is_valid, get_mon_fri_of_current_week, create_basket_item
+from main.utils import sms_code_is_valid, get_mon_fri_of_current_week, create_basket_item, clean_phone
 
 from dishes.models import DailyMenu
-from main.forms import LoginForm, RegistrationForm, ChangePasswordForm
-from main.models import Client, Basket, BasketItem, Address
+from main.forms import LoginForm, RegistrationForm, ChangePasswordForm, SmsForm
+from main.models import Client, Basket, BasketItem, Address, SmsCode
 
 
 class WeeklyMenuView(View):
@@ -32,7 +32,7 @@ class WeeklyMenuView(View):
             mon, fri = get_mon_fri_of_current_week(today + timedelta(days=2))
         else:
             mon, fri = get_mon_fri_of_current_week(today)
-        weekly_menu = DailyMenu.objects.filter(date__gte=mon, date__lte=fri)
+        weekly_menu = DailyMenu.objects.filter(date__gte=mon, date__lte=fri).prefetch_related('dinners')
         context = {
             'today': today,
             'monday_date': mon,
@@ -93,27 +93,49 @@ class LoginView(View):
 class RegistrationView(View):
 
     def post(self, request):
-        form = RegistrationForm(request.POST)
-
+        is_sms = bool(request.POST.get('action') == 'send_sms')
+        form = SmsForm(request.POST) if is_sms else RegistrationForm(request.POST)
         if form.is_valid():
-            phone = form.cleaned_data['phone']
-            password = form.cleaned_data['password']
-            sms_code = form.cleaned_data['sms_code']
-
-            if Client.objects.filter(phone=phone):
+            if is_sms:
+                phone = form.cleaned_data['phone']
+                sms_code = str(random.randrange(100000, 999999))
+                try:
+                    sms_code_object = SmsCode.objects.get(phone=phone)
+                except SmsCode.DoesNotExist:
+                    sms_code_object = SmsCode.objects.create(phone=phone)
+                sms_code_object.sms_code = sms_code
+                sms_code_object.save()
+                params = {
+                    'api_id': 'f567a71e-f7b2-c134-0da6-4c6bbd49602b',
+                    'to': phone,
+                    'msg': 'code: ' + sms_code,
+                    'json': 1
+                }
+                content = requests.post('https://sms.ru/sms/send/', params=params).json()
+                if content['status'] == 'OK':
+                    pass
                 return redirect('home')
+            else:
+                phone = form.cleaned_data['phone']
+                password = form.cleaned_data['password']
+                sms_code = str(form.cleaned_data['sms_code'])
 
-            if not sms_code_is_valid(sms_code):
-                return redirect('home')
+                if Client.objects.filter(phone=phone):
+                    print 'user already existed'
+                    return redirect('home')
 
-            user = User.objects.create_user(username=phone,
-                                            password=password)
+                if not sms_code_is_valid(sms_code, phone):
+                    print 'code in note valid'
+                    return redirect('home')
 
-            Client.objects.create(phone=phone, user=user)
+                user = User.objects.create_user(username=phone,
+                                                password=password)
 
-            login(request, user)
+                Client.objects.create(phone=phone, user=user)
 
-        return redirect('home')
+                login(request, user)
+
+            return redirect('home')
 
 
 class LogoutView(View):
@@ -222,7 +244,7 @@ class PurchasingView(View):
                 data={'lat': geo_lat, 'lon': geo_lon}
             )
             if response.status_code == 200:
-                content = json.loads(response.content)
+                content = response.json()
                 basket.route_id = content['id']
                 basket.save()
         elif address:

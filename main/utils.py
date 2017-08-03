@@ -3,7 +3,7 @@ from datetime import timedelta, date
 
 from dishes.models import DailyMenu, Dinner
 
-from main.models import Basket, BasketItem, Client
+from main.models import Basket, BasketItem, Client, SmsCode
 
 
 def get_mon_fri_of_current_week(today):
@@ -12,8 +12,16 @@ def get_mon_fri_of_current_week(today):
     return monday_date, friday_date
 
 
-def sms_code_is_valid(sms_code):
-    return True
+def sms_code_is_valid(sms_code, phone):
+    try:
+        sms_code_object = SmsCode.objects.get(phone=phone)
+    except SmsCode.DoesNotExist:
+        return False
+    true_sms_code = str(sms_code_object.sms_code)
+    response = (sms_code == true_sms_code)
+    if response:
+        sms_code_object.delete()
+    return response
 
 
 def clean_phone(dirty_phone):

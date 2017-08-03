@@ -20,7 +20,7 @@ class Address(models.Model):
 
 
 class Basket(models.Model):
-    created = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
     client = models.ForeignKey(Client, null=True)
     address = models.ForeignKey(Address, null=True)
     delivery_at = models.DateTimeField(null=True)
@@ -48,3 +48,9 @@ class BasketItem(models.Model):
 
     def sum(self):
         return self.quantity * self.price
+
+
+class SmsCode(models.Model):
+    phone = models.CharField(max_length=15, unique=True)
+    sms_code = models.IntegerField(null=True)
+    modified = models.DateTimeField(auto_now=True)

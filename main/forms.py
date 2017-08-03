@@ -6,10 +6,18 @@ from django import forms
 from main.utils import clean_phone
 
 
+class SmsForm(forms.Form):
+    phone = forms.CharField(max_length=16)
+
+    def clean_phone(self):
+        phone = self.cleaned_data['phone']
+        return clean_phone(phone)
+
+
 class RegistrationForm(forms.Form):
     phone = forms.CharField(max_length=16)
     password = forms.CharField(max_length=255)
-    sms_code = forms.CharField(max_length=10, min_length=1)
+    sms_code = forms.CharField(max_length=6, min_length=6)
 
     def clean_phone(self):
         phone = self.cleaned_data['phone']

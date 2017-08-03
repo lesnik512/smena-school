@@ -36,13 +36,14 @@
                     <div id="map" style="height: 545px;"></div>
                     <script>
                         var placemark, coords;
+                        var geo_lat = {{ order.address.geo_lat }};
+                        var geo_lon = {{ order.address.geo_lon }};
                         ymaps.ready(function () {
                             var myMap = new ymaps.Map('map', {
-{#                                    center: [54.74128152445869,55.99494346316378],#}
-                                    center: [54.706419,55.997823],
-                                    zoom: 16,
-                                    controls: []
-                                });
+                                center: [54.706419,55.997823],
+                                zoom: 16,
+                                controls: []
+                            });
                             placemark = new ymaps.Placemark([54.706419,55.997823], {
                                 balloonContent: 'Курьер'
                             });
@@ -52,6 +53,7 @@
                                     $.getJSON('/current_point/{{ order.route_id }}/',function (data) {
                                         console.log(data);
                                         if (data.point) {
+                                            if (data.point.lat === geo_lat && data.point.lon === geo_lon) clearInterval(intervalID);
                                             coords = [data.point.lat, data.point.lon];
                                             myMap.geoObjects.remove(placemark);
                                             placemark = new ymaps.Placemark(coords, {
