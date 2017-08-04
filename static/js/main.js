@@ -4,7 +4,6 @@ $(function () {
         token: "b6f7b487c9c0ba5220d9c3d31cc26184a5174432",
         type: "ADDRESS",
         count: 5,
-        /* Вызывается, когда пользователь выбирает одну из подсказок */
         onSelect: function (suggestion) {
             address_info = [
                 {
@@ -16,7 +15,6 @@ $(function () {
                     'value': suggestion.data.geo_lon
                 }
             ];
-            console.log(address_info);
         }
     });
 
@@ -35,54 +33,115 @@ $(function () {
             url: $forms.attr('action'),
             data: data,
             dataType: 'json',
-            success: function(data) {
+            success: function (data) {
                 if (data.status) window.location = data.url
             }
         });
         return false
     });
 
+    //lunch amount changing
     $('.lunch__control-cont').on('submit', function (e) {
         var $form = $(this);
         var fdata = $form.serialize();
         var $btn = $form.find("button[type=submit]:focus");
         fdata += '&amount=' + $btn.attr('value');
         $.ajax({
-           type: "POST",
-           url: $form.attr('action'),
-           data: fdata,
-           success: function(data) {
-               if (data.status) {
-                   $form.find('.lunch__control-count').text(data.amount);
-                   $('.cart__count').text(data.basket_amount);
-                   $('.cart__cost').text(data.basket_sum);
-               }
-           }
+            type: "POST",
+            url: $form.attr('action'),
+            data: fdata,
+            success: function (data) {
+                if (data.status) {
+                    $form.find('.lunch__control-count').text(data.amount);
+                    $('.cart__count').text(data.basket_amount);
+                    $('.cart__cost').text(data.basket_sum);
+                }
+            }
         });
         return false
     });
-//скроллы
 
-//скролл до меню
-    $('.hero__bottom-text').click(function () {
-        var scroll_elem = $('.menu');
-        $('html, body').animate({scrollTop: $(scroll_elem).offset().top}, 500);
+    //registration
+    $('.js-reg-form').on('submit', function (e) {
+        var $form = $(this);
+        var fdata = $form.serialize();
+        var $btn = $form.find("button[type=submit]:focus");
+        if ($btn.attr('name') === 'action') {
+            fdata += '&' + $btn.attr('name') + '=' + $btn.attr('value');
+        }
+        $.ajax({
+            type: "POST",
+            url: $form.attr('action'),
+            data: fdata,
+            success: function (data) {
+                if (data.success) {
+                    if (data.is_sms) {
+                        $btn.prop('disabled', true);
+                    }
+                    else {
+                        setTimeout(function() {location.reload();}, 2000)
+                    }
+                }
+                $.each(data.messages, function (index, value) {
+                    if (value.extra_tags === 'success') {
+                        iziToast.success({
+                            position: 'bottomCenter',
+                            message: value.message
+                        });
+                    }
+                    else {
+                        iziToast.warning({
+                            position: 'bottomCenter',
+                            message: value.message
+                        });
+                    }
+                });
+            }
+        });
+        return false
     });
 
-//скролл до форм внизу
-
-    $('.cart').click(function () {
-        var scroll_elem = $('.order');
-        $('html, body').animate({scrollTop: $(scroll_elem).offset().top}, 500);
+    //authorization
+    $('.js-login-form').on('submit', function (e) {
+        var $form = $(this);
+        var fdata = $form.serialize();
+        $.ajax({
+            type: "POST",
+            url: $form.attr('action'),
+            data: fdata,
+            success: function (data) {
+                if (data.success) {
+                    setTimeout(function() {location.reload();}, 2000)
+                }
+                $.each(data.messages, function (index, value) {
+                    if (value.extra_tags === 'success') {
+                        iziToast.success({
+                            position: 'bottomCenter',
+                            message: value.message
+                        });
+                    }
+                    else {
+                        iziToast.warning({
+                            position: 'bottomCenter',
+                            message: value.message
+                        });
+                    }
+                });
+            }
+        });
+        return false
     });
 
-    $('.button-login').click(function () {
-        var scroll_elem = $('.order');
-        $('html, body').animate({scrollTop: $(scroll_elem).offset().top}, 500);
+    //scrolls
+    $('a[href*=\\#]').on('click', function(event){
+        if (this.hash && $(this.hash).length && !$(this).hasClass('js-noscroll')) {
+            jQuery('html,body').animate({scrollTop:jQuery(this.hash).offset().top}, 500);
+            return false;
+        }
     });
 
-// Маска для телефона
-    $(".input__this-phone").on('focus',function () {
+    //phone mask
+    $(".input__this-phone").on('focusin', function () {
         $(this).mask("+7(999) 999-9999", {
             completed: function () {
                 $(this).parents('.input__cont').addClass('complete');
@@ -91,35 +150,25 @@ $(function () {
     });
 
 
-
-//Placeholder - событие по фокусу
-
-    $('.input__this').focus(function () {
+    //placeholders
+    $('.input__this').on('focusin', function () {
         $('.input__cont').removeClass('focused');
         $(this).parents('.input__cont').addClass('focused');
-    })
-
-    $('.input__this').focusout(function () {
+    }).on('focusout', function () {
         $('.input__cont').removeClass('focused');
-    })
-
-
-    $(".input__this").keyup(function () {
-            if ($(this).hasClass('input__this-phone')) {
-
-            } else {
-                if ($(this).val().length > 0) {
-                    $(this).parents('.input__cont').addClass('complete');
-                }
-                else {
-                    $(this).parents('.input__cont').removeClass('complete');
-                }
+    }).on('keyup', function () {
+        if ($(this).hasClass('input__this-phone')) {}
+        else {
+            if ($(this).val().length > 0) {
+                $(this).parents('.input__cont').addClass('complete');
             }
-
+            else {
+                $(this).parents('.input__cont').removeClass('complete');
+            }
         }
-    )
+    });
 
-// Переключение табов
+    //tabs
     $('.form__tab-item').click(function () {
         if ($(this).hasClass('active')) {
 
@@ -136,11 +185,9 @@ $(function () {
             })
         }
 
-    })
+    });
 
-
-//карточка обедов(группировка по 2 обеда для недельного меню)
-
+    //карточка обедов(группировка по 2 обеда для недельного меню)
     $('.weekly__item').each(function () {
         var curLunch = $(this).find('.lunch');
         var cardIndex = 0;
@@ -167,8 +214,7 @@ $(function () {
             }
         })
     })
-
-})
+});
 
 
 

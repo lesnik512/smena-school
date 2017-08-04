@@ -285,7 +285,7 @@ $.fn.extend({
 
 			if (!input.attr("readonly"))
 				input
-				.one("unmask", function() {
+				.on("unmask", function() {
 					input
 						.unbind(".mask")
 						.removeData($.mask.dataName);

@@ -79,6 +79,7 @@ class Base(Internationalization, Configuration):
         },
     ]
     STATIC_URL = '/static/'
+    MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
 
 class Dev(Base):

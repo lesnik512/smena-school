@@ -26,7 +26,10 @@ def sms_code_is_valid(sms_code, phone):
 
 def clean_phone(dirty_phone):
     r = re.match(r'\+7\((\d+)\).(\d+)-(\d+)', dirty_phone)
-    return ''.join(r.groups())
+    if hasattr(r,'groups'):
+        return ''.join(r.groups())
+    else:
+        return False
 
 
 def create_basket(request):

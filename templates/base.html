@@ -12,6 +12,7 @@
     <!--link rel="shortcut icon" type="image/ico" href=""/>
     <link rel="icon" type="image/png" href=""/-->
     <link rel="stylesheet" href="{% static 'css/style.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/iziToast.css' %}"/>
 </head>
 <body>
 <div class="layout">
@@ -28,14 +29,14 @@
                     </div>
                     <a href="{% url 'weekly_menu' %}" class="header__title">МЕНЮ НА НЕДЕЛЮ</a>
                     <div class="header__cart">
-                        <a class="cart"><span
+                        <a href="{% url 'home' %}#form" class="cart"><span
                             class="cart__text">В КОРЗИНЕ:</span><span
                             class="cart__count">{% if basket %}{{ basket.quantity|floatformat }}{% else %}0{% endif %}</span><span class="cart__cost">{% if basket %}{{ basket.sum|floatformat }}{% else %}0{% endif %}</span></a>
                     </div>
                     {% if user.is_authenticated %}
                         <div class="header__login"><a href="{% url 'account' %}" class="button button__akk">Личный кабинет</a></div>
                     {% else %}
-                        <div class="header__login"><a href="#login" class="button button__login">Войти</a></div>
+                        <div class="header__login"><a href="{% url 'home' %}#form" class="button button__login">Войти</a></div>
                     {% endif %}
                 </div>
             </div>
@@ -51,9 +52,10 @@
             <div class="footer__cont">
                 <div class="footer__copyright">all rights reserved copyright © 2017</div>
                 {% if user.is_authenticated %}
-                <div class="footer__button">
-                    <a href="{% url 'logout' %}" class="button button__logout">выйти</a>
-                </div>
+                <form action="{% url 'logout' %}" method="post" class="footer__button">
+                    {% csrf_token %}
+                    <button type="submit" class="button button__logout">выйти</button>
+                </form>
                 {% endif %}
             </div>
         </div>
@@ -62,6 +64,7 @@
 </body>
 <script src="{% static 'js/jquery.js' %}"></script>
 <script src="{% static 'js/jquery.maskedinput.js' %}"></script>
+<script src="{% static 'js/iziToast.js' %}"></script>
 <script src="{% static 'js/main.js' %}"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/suggestions-jquery@17.5.0/dist/js/jquery.suggestions.js"></script>
 

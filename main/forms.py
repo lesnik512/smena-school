@@ -7,30 +7,39 @@ from main.utils import clean_phone
 
 
 class SmsForm(forms.Form):
-    phone = forms.CharField(max_length=16)
+    phone = forms.CharField(max_length=16, error_messages={'required': 'Введите номер телефона'})
 
     def clean_phone(self):
-        phone = self.cleaned_data['phone']
-        return clean_phone(phone)
+        phone = clean_phone(self.cleaned_data['phone'])
+        if phone:
+            return phone
+        else:
+            raise forms.ValidationError('Введите номер телефона')
 
 
 class RegistrationForm(forms.Form):
-    phone = forms.CharField(max_length=16)
-    password = forms.CharField(max_length=255)
-    sms_code = forms.CharField(max_length=6, min_length=6)
+    phone = forms.CharField(max_length=16, error_messages={'required': 'Введите номер телефона'})
+    password = forms.CharField(max_length=255, error_messages={'required': 'Введите пароль'})
+    sms_code = forms.CharField(error_messages={'required': 'Введите код из sms'})
 
     def clean_phone(self):
-        phone = self.cleaned_data['phone']
-        return clean_phone(phone)
+        phone = clean_phone(self.cleaned_data['phone'])
+        if phone:
+            return phone
+        else:
+            raise forms.ValidationError('Введите номер телефона')
 
 
 class LoginForm(forms.Form):
-    phone = forms.CharField(max_length=16)
-    password = forms.CharField(max_length=255)
+    phone = forms.CharField(max_length=16, error_messages={'required': 'Введите номер телефона'})
+    password = forms.CharField(max_length=255, error_messages={'required': 'Введите пароль'})
 
     def clean_phone(self):
-        phone = self.cleaned_data['phone']
-        return clean_phone(phone)
+        phone = clean_phone(self.cleaned_data['phone'])
+        if phone:
+            return phone
+        else:
+            raise forms.ValidationError('Введите номер телефона')
 
 
 class ChangePasswordForm(forms.Form):

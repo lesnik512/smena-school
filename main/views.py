@@ -5,6 +5,7 @@ import random
 from datetime import timedelta, date, time, datetime
 
 import requests
+from django.contrib import messages
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -72,32 +73,56 @@ class HomeView(View):
 class LoginView(View):
     def post(self, request):
         form = LoginForm(request.POST)
+        status = False
         if form.is_valid():
             phone = form.cleaned_data['phone']
             password = form.cleaned_data['password']
-
             try:
                 Client.objects.get(phone=phone)
                 user = authenticate(request, username=phone, password=password)
                 if user:
                     login(request, user)
+                    status = True
+                    messages.success(request, 'Авторизация успешно выполнена')
+                else:
+                    messages.error(request, 'Неверная пара логин/пароль')
 
             except Client.DoesNotExist:
-                return redirect('home')
+                messages.error(request, 'Пользователь с данным номером телефона не зарегистрирован')
         else:
-            redirect('home')
+            errors = form.errors
+            for i in errors:
+                error = form.errors[i][0]
+                if error:
+                    messages.error(request, error)
+        if request.is_ajax():
+            django_messages = []
+            for message in messages.get_messages(request):
+                django_messages.append({
+                    "level": message.level,
+                    "message": message.message,
+                    "extra_tags": message.tags,
+                })
 
-        return redirect('home')
+            return JsonResponse({
+                'success': status,
+                'messages': django_messages
+            })
+        else:
+            return redirect('home')
 
 
 class RegistrationView(View):
 
     def post(self, request):
         is_sms = bool(request.POST.get('action') == 'send_sms')
+        status = False
         form = SmsForm(request.POST) if is_sms else RegistrationForm(request.POST)
         if form.is_valid():
-            if is_sms:
-                phone = form.cleaned_data['phone']
+            phone = form.cleaned_data['phone']
+            if Client.objects.filter(phone=phone):
+                messages.error(request, 'Пользователь с данным номером телефона уже существует')
+            elif is_sms:
                 sms_code = str(random.randrange(100000, 999999))
                 try:
                     sms_code_object = SmsCode.objects.get(phone=phone)
@@ -113,35 +138,51 @@ class RegistrationView(View):
                 }
                 content = requests.post('https://sms.ru/sms/send/', params=params).json()
                 if content['status'] == 'OK':
-                    pass
-                return redirect('home')
+                    status = True
+                    messages.success(request, 'Код успешно отправлен в sms')
+                else:
+                    messages.error(request, 'Не удалось отправить sms')
             else:
-                phone = form.cleaned_data['phone']
                 password = form.cleaned_data['password']
                 sms_code = str(form.cleaned_data['sms_code'])
 
-                if Client.objects.filter(phone=phone):
-                    print 'user already existed'
-                    return redirect('home')
-
                 if not sms_code_is_valid(sms_code, phone):
-                    print 'code in note valid'
-                    return redirect('home')
+                    messages.error(request, 'Введен не правильный код')
+                else:
+                    user = User.objects.create_user(username=phone, password=password)
+                    Client.objects.create(phone=phone, user=user)
+                    login(request, user)
+                    messages.success(request, 'Регистрация успешно завершена')
+                    status = True
+        else:
+            errors = form.errors
+            for i in errors:
+                error = form.errors[i][0]
+                if error:
+                    messages.error(request, error)
+        if request.is_ajax():
+            django_messages = []
+            for message in messages.get_messages(request):
+                django_messages.append({
+                    "level": message.level,
+                    "message": message.message,
+                    "extra_tags": message.tags,
+                })
 
-                user = User.objects.create_user(username=phone,
-                                                password=password)
-
-                Client.objects.create(phone=phone, user=user)
-
-                login(request, user)
-
+            return JsonResponse({
+                'success': status,
+                'messages': django_messages,
+                'is_sms': is_sms
+            })
+        else:
             return redirect('home')
 
 
 class LogoutView(View):
-    def get(self, request):
+    def post(self, request):
         basket_id = request.session.get('basket_id')
         logout(request)
+        messages.error(request, 'Выход выполнен')
         if basket_id:
             request.session['basket_id'] = basket_id
         return redirect('home')
@@ -303,7 +344,7 @@ class CurrentPointView(View):
                 headers={'host': 'cme.frfrdev.ru'}
             )
             if response.status_code == 200:
-                context = json.loads(response.content)
+                context = response.json()
         return JsonResponse(context)
 
 @register.filter

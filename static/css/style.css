@@ -37,6 +37,7 @@ template {
 }
 a {
   background: transparent;
+  color: inherit;
 }
 a:active,
 a:hover {
@@ -937,6 +938,7 @@ a.button {
   position: relative;
   display: inline-block;
   cursor: pointer;
+  text-decoration: none;
 }
 .hero__bottom-text span {
   position: absolute;
@@ -1611,4 +1613,14 @@ a.button {
 
 .suggestions-wrapper {
   font-size: 14px;
+}
+
+.form-messages {
+  font-size: 14px;
+}
+.form-messages .error {
+  color: red;
+}
+.form-messages .success {
+  color: green;
 }

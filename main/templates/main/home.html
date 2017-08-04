@@ -13,11 +13,11 @@
                 <div class="hero__text">доставка <span>обедов</span></div>
             </div>
             <div class="hero__bottom">
-                <div class="hero__bottom-text">СМОТРИ МЕНЮ НА СЕГОДНЯ<span></span></div>
+                <a href="#today_menu" class="hero__bottom-text">СМОТРИ МЕНЮ НА СЕГОДНЯ<span></span></a>
             </div>
         </div>
     </div>
-    <div class="menu">
+    <div class="menu" id="today_menu">
         <div class="layout__inner">
             <div class="menu__cont">
                 {% for dinner in dinners.all %}
@@ -26,20 +26,29 @@
             </div>
         </div>
     </div>
-    {% if not user.is_authenticated %}
-        <div class="order" id="login">
-            <div class="form">
-                <div class="form__title">ОФОРМИТЬ ЗАКАЗ</div>
+    <div class="order">
+        <div class="form" id="form">
+            {% if messages %}
+                <div class="form-messages">
+                    <div><b>Сообщения:</b></div>
+                    <ul>
+                        {% for message in messages %}
+                            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+            {% if not user.is_authenticated %}
                 <div class="form__tab">
                     <div data-tab="tab_1" class="form__tab-item active">ВХОД</div>
                     <div data-tab="tab_2" class="form__tab-item">РЕГИСТРАЦИЯ</div>
                 </div>
                 <div data-tab="tab_1" class="form__item active">
-                    <form class="form__this" action="{% url 'login' %}" method="post">
+                    <form class="form__this js-login-form" action="{% url 'login' %}" method="post">
                         {% csrf_token %}
                         <div class="form__line">
                             <div data-input="Номер телефона" class="input__cont input__phone">
-                                <input name="phone" id="phone" class="input__this input__this-phone"/>
+                                <input name="phone" class="input__this input__this-phone"/>
                             </div>
                         </div>
                         <div class="form__line">
@@ -53,11 +62,11 @@
                     </form>
                 </div>
                 <div data-tab="tab_2" class="form__item">
-                    <form class="form__this" action="{% url 'registration' %}" method="post">
+                    <form class="form__this js-reg-form" action="{% url 'registration' %}" method="post">
                         {% csrf_token %}
                         <div class="form__line">
                             <div data-input="Номер телефона" class="input__cont input__phone">
-                                <input name="phone" id="phone" class="input__this input__this-phone"/>
+                                <input name="phone" class="input__this input__this-phone"/>
                             </div>
                         </div>
                         <div class="form__line form__line-sms">
@@ -76,50 +85,45 @@
                             </div>
                         </div>
                         <div class="form__bottom">
-                            <button class="button">РЕГИСТРАЦИЯ</button>
+                            <button type="submit" class="button">РЕГИСТРАЦИЯ</button>
                         </div>
                     </form>
                 </div>
-            </div>
-        </div>
-    {% else %}
-        <div class="order order_address" {% if basket and basket.address %}style="display: none"{% endif %}>
-            <div class="form">
+            {% else %}
                 <div class="form__title">ОФОРМИТЬ ЗАКАЗ</div>
-                <div class="form__desc">АДРЕС ДОСТАВКИ</div>
-                <form action="{% url 'purchasing' %}" method="post" class="form__this">
-                    {% csrf_token %}
-                    <div class="form__line">
-                        <div data-input="Ваш адрес " class="input__cont">
-                            <input id="id_address" name="address" class="input__this" required/>
+                <div class="order_address" {% if basket and basket.address %}style="display: none"{% endif %}>
+                    <div class="form__desc">АДРЕС ДОСТАВКИ</div>
+                    <form action="{% url 'purchasing' %}" method="post" class="form__this">
+                        {% csrf_token %}
+                        <div class="form__line">
+                            <div data-input="Ваш адрес " class="input__cont">
+                                <input id="id_address" name="address" class="input__this" required/>
+                            </div>
                         </div>
-                    </div>
-                    <div class="form__more">Если все верно:</div>
-                    <div class="form__bottom">
-                        <button class="button" type="submit">ПРОДОЛЖИТЬ</button>
-                    </div>
-                </form>
-            </div>
+                        <div class="form__more">Если все верно:</div>
+                        <div class="form__bottom">
+                            <button class="button" type="submit">ПРОДОЛЖИТЬ</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="order_time" {% if not basket or not basket.address %}style="display: none"{% endif %}>
+                    <div class="form__desc">УКАЗАТЬ ВРЕМЯ ДОСТАВКИ</div>
+                    <form action="{% url 'purchasing' %}" method="post" class="form__this">
+                        {% csrf_token %}
+                        <div class="form__line form__line-time">
+                            <div class="form__time">
+                                <input id="id_hours" name="hours" placeholder="00" class="form__time-input" required/>
+                            </div>
+                            <div class="form__time">
+                                <input id="id_minutes" name="minutes" placeholder="00" class="form__time-input" required/>
+                            </div>
+                        </div>
+                        <div class="form__bottom">
+                            <button class="button" type="submit">ПРОДОЛЖИТЬ</button>
+                        </div>
+                    </form>
+                </div>
+            {% endif %}
         </div>
-        <div class="order order_time" {% if not basket or not basket.address %}style="display: none"{% endif %}>
-            <div class="form">
-                <div class="form__title">ОФОРМИТЬ ЗАКАЗ</div>
-                <div class="form__desc">УКАЗАТЬ ВРЕМЯ ДОСТАВКИ</div>
-                <form action="{% url 'purchasing' %}" method="post" class="form__this">
-                    {% csrf_token %}
-                    <div class="form__line form__line-time">
-                        <div class="form__time">
-                            <input id="id_hours" name="hours" placeholder="00" class="form__time-input" required/>
-                        </div>
-                        <div class="form__time">
-                            <input id="id_minutes" name="minutes" placeholder="00" class="form__time-input" required/>
-                        </div>
-                    </div>
-                    <div class="form__bottom">
-                        <button class="button" type="submit">ПРОДОЛЖИТЬ</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    {% endif %}
+    </div>
 {% endblock %}
