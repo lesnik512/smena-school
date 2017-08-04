@@ -17,7 +17,7 @@ from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views import View
 
-from main.utils import sms_code_is_valid, get_mon_fri_of_current_week, create_basket_item, clean_phone
+from main.utils import sms_code_is_valid, get_mon_fri_of_current_week, create_basket_item, clean_phone, form_response
 
 from dishes.models import DailyMenu
 from main.forms import LoginForm, RegistrationForm, ChangePasswordForm, SmsForm
@@ -72,8 +72,8 @@ class HomeView(View):
 
 class LoginView(View):
     def post(self, request):
-        form = LoginForm(request.POST)
         status = False
+        form = LoginForm(request.POST)
         if form.is_valid():
             phone = form.cleaned_data['phone']
             password = form.cleaned_data['password']
@@ -89,27 +89,7 @@ class LoginView(View):
 
             except Client.DoesNotExist:
                 messages.error(request, 'Пользователь с данным номером телефона не зарегистрирован')
-        else:
-            errors = form.errors
-            for i in errors:
-                error = form.errors[i][0]
-                if error:
-                    messages.error(request, error)
-        if request.is_ajax():
-            django_messages = []
-            for message in messages.get_messages(request):
-                django_messages.append({
-                    "level": message.level,
-                    "message": message.message,
-                    "extra_tags": message.tags,
-                })
-
-            return JsonResponse({
-                'success': status,
-                'messages': django_messages
-            })
-        else:
-            return redirect('home')
+        return form_response(request, form, status, 'home')
 
 
 class RegistrationView(View):
@@ -154,35 +134,14 @@ class RegistrationView(View):
                     login(request, user)
                     messages.success(request, 'Регистрация успешно завершена')
                     status = True
-        else:
-            errors = form.errors
-            for i in errors:
-                error = form.errors[i][0]
-                if error:
-                    messages.error(request, error)
-        if request.is_ajax():
-            django_messages = []
-            for message in messages.get_messages(request):
-                django_messages.append({
-                    "level": message.level,
-                    "message": message.message,
-                    "extra_tags": message.tags,
-                })
-
-            return JsonResponse({
-                'success': status,
-                'messages': django_messages,
-                'is_sms': is_sms
-            })
-        else:
-            return redirect('home')
+        return form_response(request, form, status, 'home')
 
 
 class LogoutView(View):
     def post(self, request):
         basket_id = request.session.get('basket_id')
         logout(request)
-        messages.error(request, 'Выход выполнен')
+        #messages.error(request, 'Выход выполнен')
         if basket_id:
             request.session['basket_id'] = basket_id
         return redirect('home')
@@ -209,27 +168,23 @@ class AccountView(View):
 class ChangePasswordView(View):
     @method_decorator(login_required())
     def post(self, request):
+        status = False
         form = ChangePasswordForm(request.POST)
-
         if form.is_valid():
             old_password = form.cleaned_data['old_password']
             new_password = form.cleaned_data['new_password']
-
             user = authenticate(request,
                                 username=request.user.username,
                                 password=old_password)
-
             if not user:
-                return redirect('account')
-
-            user.set_password(new_password)
-            user.save()
-
-            login(request, user)
-        else:
-            redirect('account')
-
-        return redirect('account')
+                messages.error(request, 'Текущий пароль введен неверно')
+            else:
+                user.set_password(new_password)
+                user.save()
+                login(request, user)
+                messages.success(request, 'Пароль успешно изменен')
+                status = True
+        return form_response(request, form, status, 'account')
 
 
 class ChangeAmountView(View):

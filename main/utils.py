@@ -1,7 +1,11 @@
 import re
-from datetime import timedelta, date
+from datetime import timedelta
 
-from dishes.models import DailyMenu, Dinner
+from django.contrib import messages
+from django.http import JsonResponse
+from django.shortcuts import redirect
+
+from dishes.models import Dinner
 
 from main.models import Basket, BasketItem, Client, SmsCode
 
@@ -73,3 +77,28 @@ def create_basket_item(basket, item_id):
     if not basket_item.price:
         basket_item.price = dinner.price
     return basket_item
+
+
+def form_response(request, form, status, url):
+    if not form.is_valid():
+        errors = form.errors
+        for i in errors:
+            error = form.errors[i][0]
+            if error:
+                messages.error(request, error)
+
+    if request.is_ajax():
+        django_messages = []
+        for message in messages.get_messages(request):
+            django_messages.append({
+                "level": message.level,
+                "message": message.message,
+                "extra_tags": message.tags,
+            })
+
+        return JsonResponse({
+            'success': status,
+            'messages': django_messages
+        })
+    else:
+        return redirect(url)

@@ -61,6 +61,24 @@ $(function () {
         return false
     });
 
+    //show messages
+    function show_messages(messages) {
+        $.each(messages, function (index, value) {
+            if (value.extra_tags === 'success') {
+                iziToast.success({
+                    position: 'bottomCenter',
+                    message: value.message
+                });
+            }
+            else {
+                iziToast.warning({
+                    position: 'bottomCenter',
+                    message: value.message
+                });
+            }
+        });
+    }
+
     //registration
     $('.js-reg-form').on('submit', function (e) {
         var $form = $(this);
@@ -82,20 +100,7 @@ $(function () {
                         setTimeout(function() {location.reload();}, 2000)
                     }
                 }
-                $.each(data.messages, function (index, value) {
-                    if (value.extra_tags === 'success') {
-                        iziToast.success({
-                            position: 'bottomCenter',
-                            message: value.message
-                        });
-                    }
-                    else {
-                        iziToast.warning({
-                            position: 'bottomCenter',
-                            message: value.message
-                        });
-                    }
-                });
+                show_messages(data.messages);
             }
         });
         return false
@@ -113,20 +118,26 @@ $(function () {
                 if (data.success) {
                     setTimeout(function() {location.reload();}, 2000)
                 }
-                $.each(data.messages, function (index, value) {
-                    if (value.extra_tags === 'success') {
-                        iziToast.success({
-                            position: 'bottomCenter',
-                            message: value.message
-                        });
-                    }
-                    else {
-                        iziToast.warning({
-                            position: 'bottomCenter',
-                            message: value.message
-                        });
-                    }
-                });
+                show_messages(data.messages);
+            }
+        });
+        return false
+    });
+
+    //change password
+    $('.js-password-form').on('submit', function (e) {
+        var $form = $(this);
+        var fdata = $form.serialize();
+        $.ajax({
+            type: "POST",
+            url: $form.attr('action'),
+            data: fdata,
+            success: function (data) {
+                if (data.success) {
+                    $form.get(0).reset();
+                    setTimeout(function() {location.reload();}, 2000)
+                }
+                show_messages(data.messages);
             }
         });
         return false

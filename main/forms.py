@@ -43,9 +43,9 @@ class LoginForm(forms.Form):
 
 
 class ChangePasswordForm(forms.Form):
-    old_password = forms.CharField(max_length=255)
-    new_password = forms.CharField(max_length=255)
-    new_password_repeat = forms.CharField(max_length=255)
+    old_password = forms.CharField(max_length=255, error_messages={'required': 'Введите старый пароль'})
+    new_password = forms.CharField(max_length=255, error_messages={'required': 'Введите новый пароль'})
+    new_password_repeat = forms.CharField(max_length=255, error_messages={'required': 'Повторите новый пароль'})
 
     def clean(self):
         cleaned_data = super(ChangePasswordForm, self).clean()
