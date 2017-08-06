@@ -1,6 +1,4 @@
 import os
-# import raven
-import raven as raven
 from configurations import Configuration
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -94,6 +92,7 @@ class Dev(Base):
 
 
 class Prod(Base):
+    import raven
     DEBUG = False
     ALLOWED_HOSTS = ['ash.redeploy.ru']
     Base.INSTALLED_APPS.extend([
