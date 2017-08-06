@@ -27,6 +27,7 @@ class Dish(models.Model):
 class Dinner(models.Model):
     name = models.CharField(max_length=255)
     dishes = models.ManyToManyField(Dish)
+    image = models.ImageField(blank=True, null=True)
 
     def __str__(self):
         return self.name

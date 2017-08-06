@@ -1,13 +1,12 @@
 import os
 # import raven
+import raven as raven
 from configurations import Configuration
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 class Internationalization(object):
-    # Internationalization
-    # https://docs.djangoproject.com/en/1.11/topics/i18n/
     LANGUAGE_CODE = 'en-us'
     TIME_ZONE = 'Asia/Yekaterinburg'
     USE_I18N = True
@@ -24,8 +23,6 @@ class Base(Internationalization, Configuration):
         'django.contrib.sessions',
         'django.contrib.messages',
         'django.contrib.staticfiles',
-        # 'raven.contrib.django.raven_compat',
-        # 'debug_toolbar',
         'main',
         'dishes',
     ]
@@ -36,8 +33,6 @@ class Base(Internationalization, Configuration):
         'django.middleware.csrf.CsrfViewMiddleware',
         'django.contrib.auth.middleware.AuthenticationMiddleware',
         'django.contrib.messages.middleware.MessageMiddleware',
-        # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
-        # 'debug_toolbar.middleware.DebugToolbarMiddleware',
         'main.middlewares.BasketMiddleware',
     ]
     ROOT_URLCONF = 'smena.urls'
@@ -79,26 +74,35 @@ class Base(Internationalization, Configuration):
         },
     ]
     STATIC_URL = '/static/'
+    STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+    STATICFILES_DIRS = [os.path.join(BASE_DIR, 'staticfiles')]
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
     MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
 
 class Dev(Base):
     DEBUG = True
-    DEBUG_TOOLBAR = False
-    STATICFILES_DIRS = [os.path.join(os.path.join(BASE_DIR, "static"))]
+    ALLOWED_HOSTS = ['127.0.0.1']
+    INTERNAL_IPS = {'127.0.0.1'}
+    Base.INSTALLED_APPS.extend([
+        'debug_toolbar'
+    ])
+    Base.MIDDLEWARE.extend([
+        'debug_toolbar.middleware.DebugToolbarMiddleware'
+    ])
 
 
 class Prod(Base):
     DEBUG = False
-    DEBUG_TOOLBAR = False
-    STATIC_ROOT = os.path.join(BASE_DIR, "static")
     ALLOWED_HOSTS = ['ash.redeploy.ru']
-
-
-
-# RAVEN_CONFIG = {
-#     'dsn': 'http://7a60d6cdab6c42c9ae850b3deca67a3a:6551acd7d0f84f0d98ebf2655bea80c9@sentry.smenadev.ru/63',
-#     'release': raven.fetch_git_sha(os.path.dirname(os.pardir)),
-# }
-
-# INTERNAL_IPS = {'127.0.0.1'}
+    Base.INSTALLED_APPS.extend([
+        'raven.contrib.django.raven_compat'
+    ])
+    Base.MIDDLEWARE.extend([
+        'django.middleware.clickjacking.XFrameOptionsMiddleware'
+    ])
+    RAVEN_CONFIG = {
+        'dsn': 'http://7a60d6cdab6c42c9ae850b3deca67a3a:6551acd7d0f84f0d98ebf2655bea80c9@sentry.smenadev.ru/63',
+        'release': raven.fetch_git_sha(os.path.dirname(os.pardir))
+    }

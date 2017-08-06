@@ -13,6 +13,7 @@ class DishAdmin(admin.ModelAdmin):
 
 @admin.register(Dinner)
 class DinnerAdmin(admin.ModelAdmin):
+    list_display = ['name', 'image']
     filter_horizontal = ['dishes']
 
 

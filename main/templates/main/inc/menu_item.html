@@ -1,7 +1,7 @@
 {% load static %}
 
 <div class="lunch">
-    <div style="background-image:url('{% static "img/design/item_03.jpg" %}')" class="lunch__image"></div>
+    <div style="background-image:url('{{ dinner.image.url }}')" class="lunch__image"></div>
     <div class="lunch__desc">
         <div class="lunch__top">
             <div data-desc="{{ dinner.weight }} гр / {{ dinner.calorie }} ккал" class="lunch__title">

@@ -5,12 +5,10 @@
 <head>
     <meta charset="utf-8"/>
     <title>{% block title %}{% endblock %}</title>
-    <!--meta(name="viewport" content="width=1240")-->
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1,user-scalable=0"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=0"/>
     <meta content="IE=edge" http-equiv="X-UA-Compatible"/>
-    <!--link rel="shortcut icon" type="image/ico" href=""/>
-    <link rel="icon" type="image/png" href=""/-->
+    <link rel="shortcut icon" type="image/ico" href="{% static 'img/favicon.ico' %}"/>
+    <link rel="icon" type="image/png" href="{% static 'img/favicon-32x32.png' %}"/>
     <link rel="stylesheet" href="{% static 'css/style.css' %}"/>
     <link rel="stylesheet" href="{% static 'css/iziToast.css' %}"/>
 </head>
