@@ -1,5 +1,5 @@
 contextlib2==0.5.5
-Django==1.11.21
+django>=1.11.22
 django-debug-toolbar==1.8
 pytz==2017.2
 raven==6.1.0
