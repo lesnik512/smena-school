@@ -1,6 +1,6 @@
 contextlib2==0.5.5
 django>=1.11.22
-django-debug-toolbar==1.8
+django-debug-toolbar==1.11.1
 pytz==2017.2
 raven==6.1.0
 sqlparse==0.2.3
